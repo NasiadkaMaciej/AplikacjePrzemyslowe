@@ -24,7 +24,12 @@ public class Employee {
 	}
 
 	public Employee(String firstName, String lastName, String email, String company, Position position) {
-		this(firstName, lastName, email, company, position, position.getBaseSalary());
+		this.firstName = requireText(firstName, "firstName");
+		this.lastName = requireText(lastName, "lastName");
+		this.email = requireText(email, "email").toLowerCase(Locale.ROOT);
+		this.company = requireText(company, "company");
+		this.position = Objects.requireNonNull(position, "position");
+		this.salary = position.getBaseSalary();
 	}
 
 	private static String requireText(String value, String fieldName) {
