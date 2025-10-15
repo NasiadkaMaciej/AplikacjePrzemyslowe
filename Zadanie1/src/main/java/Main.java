@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class Zadanie1Application {
+public class Main {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Zadanie1Application.class, args);
+		SpringApplication.run(Main.class, args);
 		System.err.println("Uruchomiono aplikację Zadanie1");
 	}
 
@@ -27,8 +27,8 @@ public class Zadanie1Application {
 			  "Pracownik4", "Nazwisko4", "email4@email.pl", "Firma2", Position.PROGRAMISTA, BigDecimal.valueOf(8_700)));
 			employeeService.addEmployee(new Employee(
 			  "Pracownik5", "Nazwisko5", "email5@email.pl", "Firma3", Position.STAZYSTA, BigDecimal.valueOf(3_200)));
-            employeeService.addEmployee(new Employee(
-                    "Pracownik6", "Nazwisko6", "email6@email.pl", "Firma3", Position.STAZYSTA));
+			employeeService.addEmployee(
+			  new Employee("Pracownik6", "Nazwisko6", "email6@email.pl", "Firma3", Position.STAZYSTA));
 
 			System.out.println("Wszyscy pracownicy:");
 			employeeService.findAll().forEach(System.out::println);
