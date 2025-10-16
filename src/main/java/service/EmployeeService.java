@@ -2,14 +2,9 @@ package MaciejNasiadka.Zadanie1;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import model.CompanyStatistics;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -66,5 +61,35 @@ public class EmployeeService {
 
 	public Optional<Employee> findHighestPaidEmployee() {
 		return employeesByEmail.values().stream().max(Comparator.comparing(Employee::getSalary));
+	}
+
+	public List<Employee> validateSalaryConsistency() {
+		return employeesByEmail.values()
+		  .stream()
+		  .filter(employee -> employee.getSalary().compareTo(employee.getPosition().getBaseSalary()) < 0)
+		  .collect(Collectors.toList());
+	}
+
+	public Map<String, CompanyStatistics> getCompanyStatistics() {
+		return employeesByEmail.values().stream().collect(Collectors.groupingBy(
+		  Employee::getCompany, Collectors.collectingAndThen(Collectors.toList(), companyEmployees -> {
+			  long count = companyEmployees.size();
+
+			  double averageSalary =
+				companyEmployees.stream().mapToDouble(e -> e.getSalary().doubleValue()).average().orElse(0.0);
+
+			  String topEarnerName = companyEmployees.stream()
+									   .max(Comparator.comparing(Employee::getSalary))
+									   .map(emp -> emp.getFirstName() + " " + emp.getLastName())
+									   .orElse("N/A");
+
+			  return new CompanyStatistics(count, averageSalary, topEarnerName);
+		  })));
+	}
+
+	public void addEmployees(List<Employee> newEmployees) {
+		for (Employee employee : newEmployees) {
+			addEmployee(employee);
+		}
 	}
 }
