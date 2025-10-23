@@ -1,7 +1,5 @@
 package service;
 
-import MaciejNasiadka.Zadanie1.Employee;
-import MaciejNasiadka.Zadanie1.Position;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,6 +12,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import model.Employee;
+import model.Position;
 
 public class ApiService {
 	private final String apiUrl;

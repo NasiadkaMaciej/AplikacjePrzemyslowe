@@ -7,15 +7,20 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import model.CompanyStatistics;
+import model.Employee;
 import model.ImportSummary;
+import model.Position;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import service.ApiService;
+import service.EmployeeService;
 import service.ImportService;
 
 @SpringBootApplication
+@ComponentScan(basePackages = { "MaciejNasiadka.Zadanie1", "service", "model", "exception" })
 public class Main {
 
 	public static final String RESET = "\u001B[0m";

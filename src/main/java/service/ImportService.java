@@ -1,15 +1,15 @@
 package service;
 
-import MaciejNasiadka.Zadanie1.Employee;
-import MaciejNasiadka.Zadanie1.EmployeeService;
-import MaciejNasiadka.Zadanie1.Position;
 import exception.InvalidDataException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import model.Employee;
 import model.ImportSummary;
+import model.Position;
+import service.EmployeeService;
 
 public class ImportService {
 

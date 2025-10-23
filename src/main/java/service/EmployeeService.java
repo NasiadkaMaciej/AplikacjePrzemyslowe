@@ -1,10 +1,12 @@
-package MaciejNasiadka.Zadanie1;
+package service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import model.CompanyStatistics;
+import model.Employee;
+import model.Position;
 import org.springframework.stereotype.Service;
 
 @Service

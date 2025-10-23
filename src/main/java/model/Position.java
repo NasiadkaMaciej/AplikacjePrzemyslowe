@@ -1,4 +1,4 @@
-package MaciejNasiadka.Zadanie1;
+package model;
 
 import java.math.BigDecimal;
 
