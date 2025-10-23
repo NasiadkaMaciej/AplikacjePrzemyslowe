@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.6'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'MaciejNasiadka'
@@ -22,9 +23,45 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'com.google.code.gson:gson'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.10.0' // Add Mockito with JUnit 5 support
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+jacoco {
+	toolVersion = '0.8.11'
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required = true
+		xml.required = true
+		csv.required = false
+	}
+}
+
+// Configure minimum coverage threshold
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			element = 'PACKAGE'
+			includes = ['com.example.*']
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.7 // 70% line coverage required
+			}
+		}
+	}
+}
+
+// Add a task to check coverage
+tasks.register('checkCoverage') {
+	dependsOn jacocoTestReport
+	dependsOn jacocoTestCoverageVerification
 }

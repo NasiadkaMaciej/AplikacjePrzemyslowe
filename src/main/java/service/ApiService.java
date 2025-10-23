@@ -22,9 +22,11 @@ public class ApiService {
 
 	public ApiService(String apiUrl) {
 		this.apiUrl = apiUrl;
-		this.client = HttpClient.newHttpClient();
+		this.client = createHttpClient();
 		this.gson = new Gson();
 	}
+
+	protected HttpClient createHttpClient() { return HttpClient.newHttpClient(); }
 
 	public List<Employee> fetchEmployeesFromApi() throws ApiException {
 		try {
