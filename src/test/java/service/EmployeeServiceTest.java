@@ -113,12 +113,8 @@ class EmployeeServiceTest {
 	void countByPosition_ShouldReturnCorrectCount() {
 		employeeService.addEmployee(employee1); // MANAGER
 		employeeService.addEmployee(employee2); // PROGRAMISTA
-		employeeService.addEmployee(new Employee("Another",
-												 "Programmer",
-												 "another@company.com",
-												 "Company",
-												 Position.PROGRAMISTA,
-												 BigDecimal.valueOf(9000))); // Another PROGRAMISTA
+		employeeService.addEmployee(new Employee(
+		  "Another", "Programmer", "another@company.com", "Company", Position.PROGRAMISTA, BigDecimal.valueOf(9000)));
 
 		Map<Position, Long> counts = employeeService.countByPosition();
 		assertEquals(2, counts.size());

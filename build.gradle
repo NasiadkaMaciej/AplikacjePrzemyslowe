@@ -22,8 +22,9 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'com.google.code.gson:gson'
+	implementation 'javax.annotation:javax.annotation-api:1.3.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mockito:mockito-junit-jupiter:5.10.0' // Add Mockito with JUnit 5 support
+	testImplementation 'org.mockito:mockito-junit-jupiter:5.10.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -45,22 +46,20 @@ jacocoTestReport {
 	}
 }
 
-// Configure minimum coverage threshold
 jacocoTestCoverageVerification {
 	violationRules {
 		rule {
 			element = 'PACKAGE'
-			includes = ['com.example.*']
+			includes = ['MaciejNasiadka.Zadanie1.*']
 			limit {
 				counter = 'LINE'
 				value = 'COVEREDRATIO'
-				minimum = 0.7 // 70% line coverage required
+				minimum = 0.7
 			}
 		}
 	}
 }
 
-// Add a task to check coverage
 tasks.register('checkCoverage') {
 	dependsOn jacocoTestReport
 	dependsOn jacocoTestCoverageVerification

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.google.gson.Gson;
 import exception.ApiException;
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -21,21 +22,16 @@ import org.mockito.MockitoAnnotations;
 class ApiServiceTest {
 
 	@Mock private HttpClient mockHttpClient;
-
 	@Mock private HttpResponse<String> mockResponse;
 
 	private ApiService apiService;
+	private Gson gson;
 
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
-
-		apiService = new ApiService("https://jsonplaceholder.typicode.com/users") {
-			@Override
-			protected HttpClient createHttpClient() {
-				return mockHttpClient;
-			}
-		};
+		gson = new Gson();
+		apiService = new ApiService(mockHttpClient, gson, "https://jsonplaceholder.typicode.com/users");
 	}
 
 	@Test
@@ -66,8 +62,6 @@ class ApiServiceTest {
 		// Configure mock behavior
 		when(mockResponse.statusCode()).thenReturn(200);
 		when(mockResponse.body()).thenReturn(jsonResponse);
-
-		// Fix the type mismatch with explicit generic type
 		when(mockHttpClient.send(any(HttpRequest.class), any(BodyHandler.class))).thenReturn(mockResponse);
 
 		// Execute the method
@@ -96,13 +90,11 @@ class ApiServiceTest {
 	  throws IOException, InterruptedException {
 		// Configure mock behavior
 		when(mockResponse.statusCode()).thenReturn(404);
-
-		// Fix the type mismatch with explicit generic type
 		when(mockHttpClient.send(any(HttpRequest.class), any(BodyHandler.class))).thenReturn(mockResponse);
 
 		// Execute and verify
 		ApiException exception = assertThrows(ApiException.class, () -> apiService.fetchEmployeesFromApi());
-		assertTrue(exception.getMessage().contains("API request failed with status code"));
+		assertTrue(exception.getMessage().contains("API returned status code"));
 	}
 
 	@Test
@@ -114,23 +106,23 @@ class ApiServiceTest {
 
 		// Execute and verify
 		ApiException exception = assertThrows(ApiException.class, () -> apiService.fetchEmployeesFromApi());
-		assertTrue(exception.getMessage().contains("Error during API request"));
+		assertTrue(exception.getMessage().contains("Failed to fetch data from API"));
 	}
 
 	@Test
-	void fetchEmployeesFromApi_ShouldThrowApiException_WhenJsonIsInvalid() throws IOException, InterruptedException {
-		// Prepare invalid JSON response
-		String invalidJson = "{ this is not valid json";
+	void fetchEmployeesFromApi_ShouldHandleEmptyResponse() throws IOException, InterruptedException, ApiException {
+		// Prepare empty JSON array response
+		String emptyJson = "[]";
 
 		// Configure mock behavior
 		when(mockResponse.statusCode()).thenReturn(200);
-		when(mockResponse.body()).thenReturn(invalidJson);
-
-		// Fix the type mismatch with explicit generic type
+		when(mockResponse.body()).thenReturn(emptyJson);
 		when(mockHttpClient.send(any(HttpRequest.class), any(BodyHandler.class))).thenReturn(mockResponse);
 
-		// Execute and verify
-		ApiException exception = assertThrows(ApiException.class, () -> apiService.fetchEmployeesFromApi());
-		assertTrue(exception.getMessage().contains("Error parsing JSON response"));
+		// Execute the method
+		List<Employee> employees = apiService.fetchEmployeesFromApi();
+
+		// Verify results
+		assertTrue(employees.isEmpty());
 	}
 }

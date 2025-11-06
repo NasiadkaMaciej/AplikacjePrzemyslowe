@@ -2,7 +2,6 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import exception.ApiException;
 import java.io.IOException;
@@ -14,61 +13,56 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Employee;
 import model.Position;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ApiService {
-	private final String apiUrl;
-	private final HttpClient client;
+	private final HttpClient httpClient;
 	private final Gson gson;
+	private final String apiUrl;
 
-	public ApiService(String apiUrl) {
+	public ApiService(HttpClient httpClient, Gson gson, @Value("${app.api.url}") String apiUrl) {
+		this.httpClient = httpClient;
+		this.gson = gson;
 		this.apiUrl = apiUrl;
-		this.client = createHttpClient();
-		this.gson = new Gson();
+		System.out.println("ApiService has been created with dependencies injected!");
+		System.out.println("API URL: " + apiUrl);
 	}
-
-	protected HttpClient createHttpClient() { return HttpClient.newHttpClient(); }
 
 	public List<Employee> fetchEmployeesFromApi() throws ApiException {
 		try {
 			HttpRequest request = HttpRequest.newBuilder().uri(URI.create(apiUrl)).GET().build();
 
-			HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+			HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
 			if (response.statusCode() != 200) {
-				throw new ApiException("API request failed with status code: " + response.statusCode());
+				throw new ApiException("API returned status code: " + response.statusCode());
 			}
 
-			return parseEmployeesFromJson(response.body());
-
-		} catch (IOException | InterruptedException e) { throw new ApiException("Error during API request", e); }
+			return parseApiResponse(response.body());
+		} catch (IOException | InterruptedException e) {
+			throw new ApiException("Failed to fetch data from API: " + e.getMessage(), e);
+		}
 	}
 
-	private List<Employee> parseEmployeesFromJson(String json) throws ApiException {
+	private List<Employee> parseApiResponse(String jsonResponse) {
 		List<Employee> employees = new ArrayList<>();
+		JsonArray jsonArray = gson.fromJson(jsonResponse, JsonArray.class);
 
-		try {
-			JsonArray jsonArray = gson.fromJson(json, JsonArray.class);
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JsonObject userJson = jsonArray.get(i).getAsJsonObject();
 
-			for (JsonElement element : jsonArray) {
-				JsonObject userObject = element.getAsJsonObject();
+			String firstName = userJson.get("name").getAsString().split(" ")[0];
+			String lastName = userJson.get("name").getAsString().split(" ").length > 1
+								? userJson.get("name").getAsString().split(" ")[1]
+								: "";
+			String email = userJson.get("email").getAsString();
+			String company = userJson.getAsJsonObject("company").get("name").getAsString();
+			// Pracownicy z API to programiści
+			employees.add(new Employee(firstName, lastName, email, company, Position.PROGRAMISTA));
+		}
 
-				// Extract and split the full name
-				String fullName = userObject.get("name").getAsString();
-				String[] nameParts = fullName.split(" ", 2);
-				String firstName = nameParts[0];
-				String lastName = nameParts.length > 1 ? nameParts[1] : "";
-
-				String email = userObject.get("email").getAsString();
-				String company = userObject.getAsJsonObject("company").get("name").getAsString();
-
-				// Pracownicy z API to programiści
-				Position position = Position.PROGRAMISTA;
-
-				employees.add(new Employee(firstName, lastName, email, company, position));
-			}
-
-			return employees;
-
-		} catch (Exception e) { throw new ApiException("Error parsing JSON response", e); }
+		return employees;
 	}
 }

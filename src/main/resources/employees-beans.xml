@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util.xsd">
+    
+    <bean id="xmlEmployee1" class="model.Employee">
+        <constructor-arg value="Jan"/>
+        <constructor-arg value="Kowalski"/>
+        <constructor-arg value="jan.kowalski@techcorp.com"/>
+        <constructor-arg value="TechCorp"/>
+        <constructor-arg value="MANAGER"/>
+        <constructor-arg value="12500"/>
+    </bean>
+    
+    <bean id="xmlEmployee2" class="model.Employee">
+        <constructor-arg value="Anna"/>
+        <constructor-arg value="Nowak"/>
+        <constructor-arg value="anna.nowak@techcorp.com"/>
+        <constructor-arg value="TechCorp"/>
+        <constructor-arg value="PROGRAMISTA"/>
+        <constructor-arg value="8500"/>
+    </bean>
+    
+    <bean id="xmlEmployee3" class="model.Employee">
+        <constructor-arg value="Piotr"/>
+        <constructor-arg value="Wiśniewski"/>
+        <constructor-arg value="piotr.wisniewski@techcorp.com"/>
+        <constructor-arg value="TechCorp"/>
+        <constructor-arg value="WICEPREZES"/>
+        <constructor-arg value="18000"/>
+    </bean>
+    
+    <util:list id="xmlEmployees" value-type="model.Employee">
+        <ref bean="xmlEmployee1"/>
+        <ref bean="xmlEmployee2"/>
+        <ref bean="xmlEmployee3"/>
+    </util:list>
+</beans>
